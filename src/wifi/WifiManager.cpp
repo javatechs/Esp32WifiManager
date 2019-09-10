@@ -144,7 +144,7 @@ void WifiManager::connectToWiFi(const char * ssid, const char * pwd) {
  * Update AP list
  *
  * This function will update the AP list, then reconnect
- * @return the current number of availible AP's
+ * @return the current number of available AP's
  * @Note this will take a few seconds and is BLOCKING during that time
  */
 int WifiManager::updateApList(){
@@ -225,17 +225,22 @@ void WifiManager::rescan() {
 
 	preferences.end();
 	if (!myNetworkPresent) {
-		Serial.println("NO availible AP/Pass stored");
+		Serial.println("NO available AP/Pass stored");
 
 		APMode = true;
 	}else
 		state=reconnect;
 }
-void WifiManager::runSerialLoop(){
+
+void WifiManager::runSerialLoop(bool fp(String)){
 	if (state != HaveSSIDSerial) {
 			if (Serial.available() > 0) {
 				String tmp = Serial.readString();
 				tmp.trim();
+				if (NULL!=fp) {
+					// Return if true/handled
+					if (fp(tmp)) return;
+				}
 				if (tmp.substring(0, 3).compareTo("AP:") == 0
 						|| tmp.substring(0, 3).compareTo("ap:") == 0) {
 					String got = tmp.substring(3, 18); // ensure SSID is less than 15 char to use the SSID as key for password
@@ -273,9 +278,9 @@ void WifiManager::runSerialLoop(){
 			}
 		}
 }
-void WifiManager::loop() {
+void WifiManager::loop(bool fp(String)) {
 	long now = millis();
-	runSerialLoop();
+	runSerialLoop(fp);
 	switch (state) {
 	case firstStart:
 		//staticRef->printState();

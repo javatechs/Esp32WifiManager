@@ -46,16 +46,16 @@ private:
 	enum connectionState state=firstStart;
 	enum connectionState whatToDoAfterScanning=reconnect;
 	bool setupDone = false;
-	void runSerialLoop();
+	void runSerialLoop(bool fp(String));
 public:
 	/**
-	 * Static reference used by teh wifi event to pass teh event from the static context to the object context.
+	 * Static reference used by the wifi event to pass the event from the static context to the object context.
 	 */
 	static WifiManager * staticRef;
 	/**
 	 * WifiManager is a class to manage the WIFI connections and reconnections
 	 * THis manager will also take over the Serial object and use it to set connection
-	 * To connect to an AP, type the AP into the arduino serial moniter and hit enter
+	 * To connect to an AP, type the AP into the Arduino serial monitor and hit enter
 	 * When the password prompt comes up, type the password and and hit enter.
 	 * if the password is correct, the AP will be stored for a fast connect next time.
 	 *
@@ -67,9 +67,9 @@ public:
 	/**
 	 * call the loop function to update the state
 	 */
-	void loop();
+	void loop(bool fp(String) = NULL);
 	/**
-	 * Perfoem a normal setup
+	 * Perform a normal setup
 	 * This will attempt to connect to a stored network.
 	 * If the stored network is not found, it will re-scan and connect to a remembered network,
 	 * if no remembered network is found, it will start AP mode
@@ -115,7 +115,7 @@ public:
 	 * Update AP list
 	 *
 	 * This function will update the AP list, then reconnect
-	 * @return the current number of availible AP's
+	 * @return the current number of available AP's
 	 * @Note this will take a few seconds and is BLOCKING during that time
 	 */
 	int updateApList();
